@@ -210,7 +210,7 @@ connection.  Other values mean to disable ssh X forwarding."
   :type '(choice boolean (const auto))
   :group 'term+mux)
 
-(defcustom term+mux-ssh-control-master t
+(defcustom term+mux-ssh-control-master nil
   "t means to enable ControlMaster, ControlPath and
 ControlPersist options for ssh connections.  These options are
 enabled only when the ssh client supports ControlPersist option."
