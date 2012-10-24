@@ -128,7 +128,6 @@ user-at-host) form."
   :type '(list (choice string symbol
                        (cons (const quote) (list (choice string symbol)))))
   :group 'term+mux)
-
 (defcustom term+mux-remote-command '(term+mux-ssh-command)
   "Command and arguments in a list to run command at remote host.
 The value can be a list whose element is either a string, a
@@ -440,7 +439,8 @@ This variable is used in `term+mux-ssh-command' and
 
 (defun term+mux-x-available-p ()
   (condition-case nil
-      (or (x-open-connection (or x-display-name (getenv "DISPLAY"))) t)
+      (let ((display (or x-display-name (getenv "DISPLAY"))))
+        (or (x-open-connection display) (x-close-connection display) t))
     (error nil)))
 
 (defun term+mux-ssh-control-persist-enabled-p ()
