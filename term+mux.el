@@ -690,7 +690,9 @@ See `term+mux-new' for the detail."
    (let* ((session
            (or (and (or (not current-prefix-arg)
                         (not (term+mux-prefix-arg-twice-p)))
-                    (term+mux-current-session))
+                    (or (term+mux-current-session)
+                        (and (= (length term+mux-sessions) 1)
+                             term+mux-default-session)))
                (completing-read "Session: " term+mux-sessions
                                 nil nil nil nil term+mux-default-session)))
           (term+mux-default-command 'shell)
