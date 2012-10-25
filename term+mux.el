@@ -440,7 +440,8 @@ This variable is used in `term+mux-ssh-command' and
 (defun term+mux-x-available-p ()
   (condition-case nil
       (let ((display (or x-display-name (getenv "DISPLAY"))))
-        (or (x-open-connection display) (x-close-connection display) t))
+        (and (stringp display) (> (length display) 0)
+             (or (x-open-connection display) (x-close-connection display) t)))
     (error nil)))
 
 (defun term+mux-ssh-control-persist-enabled-p ()
