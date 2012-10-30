@@ -286,6 +286,7 @@ This variable is used in `term+mux-ssh-command' and
     (define-key map (kbd "N") #'term+mux-new)
     (define-key map (kbd "c") #'term+mux-new)
     (define-key map (kbd "o") #'term+mux-other-window)
+    (define-key map (kbd "O") #'term+mux-new-other-window)
     (define-key map (kbd "C") #'term+mux-new-command)
     (define-key map (kbd "S") #'term+mux-new-session)
     (define-key map (kbd "R") #'term+mux-remote-session)
@@ -734,7 +735,7 @@ arguments."
                         (call-interactively 'term+mux-noselect)
                       (term+mux-noselect session name command))))
 
-(defun term+mux-other-window (&optional session name command)
+(defun term+mux-new-other-window (&optional session name command)
   "Open a new terminal as a new tab in the other window.
 See `term+mux-new' for the detail."
   (interactive)
@@ -742,6 +743,29 @@ See `term+mux-new' for the detail."
                  (call-interactively 'term+mux-noselect)
                (term+mux-noselect session name command))))
     (switch-to-buffer-other-window (tab-group:tab-buffer tab))))
+
+(defun term+mux-other-window (&optional session)
+  "Open a terminal of SESSION in an other window.
+If there is no terminal in the session, create a new one."
+  (interactive)
+  (let* ((session (or session term+mux-default-session))
+         (tabs (term+mux-session-as-group session tabs))
+         term-tab selected-tab)
+    (while tabs
+      (let ((tab (car tabs)))
+        (with-current-buffer (tab-group:tab-buffer tab)
+          (when (eq major-mode 'term-mode)
+            (setq term-tab (or term-tab tab))
+            (when (and (eq (car tabs) tab-group:current-tab)
+                       (not (string-match-p "^ " (buffer-name))))
+              (setq selected-tab tab tabs nil)))))
+      (setq tabs (cdr tabs)))
+    (let ((tab (or selected-tab term-tab)))
+      (if tab
+          (progn
+            (switch-to-buffer-other-window (tab-group:tab-buffer tab))
+            (tab-group:select tab))
+        (term+mux-new-other-window session)))))
 
 (defun term+mux-new-command ()
   "Open a new terminal as a new tab with always asking what
