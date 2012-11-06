@@ -35,6 +35,7 @@
 (term+new-protocol "mux")
 (term+new-control-command "\033k" term+-st 'term+mux-set-title)
 (term+new-control-command "\033]2;" term+-st 'term+mux-set-title)
+(term+new-control-command "\033]0;" term+-bel 'term+mux-set-title)
 (term+new-control-command (term+osc-emacs "cdd") term+-st 'term+mux-cdd)
 
 
